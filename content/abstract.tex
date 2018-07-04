@@ -1,0 +1,20 @@
+% !TEX root = ../thesis-example.tex
+%
+\pdfbookmark[0]{Abstract}{Abstract}
+\chapter*{Abstract}
+
+\label{sec:abstract}
+\vspace*{-12mm}
+
+The fields of neuroscience and artificial intelligence have a long and entwined history. In recent times, however, communication and collaboration between the two fields has become a rarity as they have evolved. Written in the era when artificial intelligence and deep learning is revolutionising the world, this thesis revisits and searches for inspiration from biological intelligence. The efficiency and accuracy with which the human brain processes incoming stimulus (data) in millisecond resolution using remarkably low power is unprecedented. Motivated by this very capability in the generic sense, this thesis has focused on developing neurobiologically inspired computational models known as spiking neural networks to tackle multi-modal time-series data. In a more definitive formalisation, this work has aimed to answer three research questions:
+\begin{enumerate}
+	\item How to optimally design an implementation of neuromorphic architecture which is capable of processing large volumes of spatio-temporal data? To answer this research question, the unsupervised SNNc algorithm (as part of NeuCube architecture) were studied and numerous designs of the SNNc graph was analysed in regards to storage and execution time complexities. Further, the study was extended to include an analysis of the software design principles for achieving modularity and heterogeneity. The design principles formalised here are implemented in the NeuCube software publicly available from \url{www.kedri.aut.ac.nz/neucube}. The design principles proposed in the study are also utilised in other parts of this work.
+	
+	\item How to perform neural encoding on real-world data to represent information as spike-timings? This topic has been analysed from the viewpoint of data compression and information theory. To answer this research question, the focus was on using temporal encoding as a framework for concise representation of large volumes of data. Apart from comparing the state of the art temporal encoding algorithms from literature, a novel \emph{a priori} knowledge driven temporal encoding framework was formalised and an algorithmic realisation of it for fMRI data, called GAGamma, was proposed. The temporal encoding algorithms on benchmark fMRI data was experimentally evaluated to demonstrate its superiority to succinctly represent the discriminatory information in the data without appreciable information loss. It was also demonstrated that the proposed encoding framework provides enhanced flexibility to include \emph{a priori} knowledge of the data source and thus, provide the compression/encoding algorithms sufficient redundancy to compress large datasets in an optimally concise manner.
+	
+	\item How to recognise patterns from multi-modal data with spatial, temporal and orientation information using neuromorphic architectures? To answer this research question, a novel, unsupervised learning algorithm, namely oiSTDP learning algorithm, was proposed for fusing temporal, spatial and orientation information in a spiking neural network architecture. Furthermore, a case study is presented on building a computational model that discriminates between people with schizophrenia who respond or do not respond to mono-therapy with the anti-psychotic clozapine. The performance of the proposed algorithm as part of the modified NeuCube framework has demonstrated superiority against the state of the art deep learning algorithm not only in prediction performance but also degree of interpretability.
+
+\end{enumerate}
+
+Overall, through this work, the researcher has presented several novel approaches of recognising patterns in time series data using spike-timings as the unit of data representation in the neuromorphic computation framework. The several software design challenges that arose due to the nature of neuromorphic computation framework has also been addressed in this thesis.      
+

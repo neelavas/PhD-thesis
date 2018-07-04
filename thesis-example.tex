@@ -1,0 +1,251 @@
+% **************************************************
+% Document Class Definition
+% **************************************************
+\PassOptionsToPackage{dvipsnames}{xcolor}
+\PassOptionsToPackage{subfigure}{tocloft} 
+\documentclass[%
+	paper=A4,					% paper size --> A4 is default in Germany
+	twoside=false,				% onesite or twoside printing
+	openright,					% doublepage cleaning ends up right side
+	parskip=full,				% spacing value / method for paragraphs
+	chapterprefix=true,			% prefix for chapter marks
+	12pt,						% font size
+	headings=normal,			% size of headings
+	bibliography=totoc,			% include bib in toc
+	%listof=totoc,				% include listof entries in toc
+	titlepage=on,				% own page for each title page
+	captions=tableabove,		% display table captions above the float env
+	draft=false,				% value for draft version
+]{scrreprt}%
+
+% **************************************************
+% Debug LaTeX Information
+% **************************************************
+%\listfiles
+
+% **************************************************
+% Information and Commands for Reuse
+% **************************************************
+\newcommand{\thesisTitle}{Neuromorphic Computational Models for Machine Learning and Pattern Recognition from Multi-modal Time-series Data}
+\newcommand{\thesisName}{Neelava Sengupta}
+\newcommand{\thesisSubject}{Computer and Information Sciences}
+\newcommand{\thesisDate}{\today}
+\newcommand{\thesisVersion}{}
+
+\newcommand{\thesisFirstReviewer}{Jane Doe}
+\newcommand{\thesisFirstReviewerUniversity}{\protect{Clean Thesis Style University}}
+\newcommand{\thesisFirstReviewerDepartment}{Department of Clean Thesis Style}
+
+\newcommand{\thesisSecondReviewer}{John Doe}
+\newcommand{\thesisSecondReviewerUniversity}{\protect{Clean Thesis Style University}}
+\newcommand{\thesisSecondReviewerDepartment}{Department of Clean Thesis Style}
+
+\newcommand{\thesisFirstSupervisor}{Nikola Kasabov}
+\newcommand{\thesisSecondSupervisor}{Denise Taylor}
+\newcommand{\thesisThirdSupervisor}{Grace Wang}
+
+\newcommand{\thesisUniversity}{\protect{Auckland University of Technology}}
+\newcommand{\thesisUniversityDepartment}{Design and Creative Technologies}
+\newcommand{\thesisUniversityInstitute}{School of Engineering, Computer and Mathematical Sciences}
+\newcommand{\thesisUniversityGroup}{Knowledge Engineering and Discovery Research Institute (KEDRI)}
+\newcommand{\thesisUniversityCity}{Auckland}
+\newcommand{\thesisUniversityStreetAddress}{55 Wellesley St. E}
+\newcommand{\thesisUniversityPostalCode}{1010}
+\newcommand{\pluseq}{\mathrel{+}=}
+\newcommand{\minuseq}{\mathrel{-}=}
+\newcommand{\Tau}{\mathrm{T}}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+
+
+% **************************************************
+% Load and Configure Packages
+% **************************************************
+\usepackage{caption}
+\usepackage{graphicx, rotating, tcolorbox, subfig, lscape}
+\usepackage{mathtools, amssymb, mathpazo, pifont}
+\usepackage[chapter]{algorithm}
+\usepackage{algorithmic}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{tabularx, booktabs, array, multirow}
+\usepackage{listings}
+% \usepackage[utf8]{inputenc}		% defines file's character encoding
+\usepackage[english]{babel} % babel system, adjust the language of the content
+\usepackage[					% clean thesis style
+	figuresep=colon,%
+	sansserif=false,%
+	hangfigurecaption=false,%
+	hangsection=false,%
+	hangsubsection=false,%
+	colorize=bw,%
+	colortheme=bluemagenta,%
+	bibsys=biber,%
+	bibfile=reference,%
+	bibstyle=apa,%
+]{cleanthesis}
+
+\hypersetup{					% setup the hyperref-package options
+	pdftitle={\thesisTitle},	% 	- title (PDF meta)
+	pdfsubject={\thesisSubject},% 	- subject (PDF meta)
+	pdfauthor={\thesisName},	% 	- author (PDF meta)
+	plainpages=false,			% 	-
+	colorlinks=false,			% 	- colorize links?
+	pdfborder={0 0 0},			% 	-
+	breaklinks=true,			% 	- allow line break inside links
+	bookmarksnumbered=true,		%
+	bookmarksopen=true			%
+}
+
+\usetikzlibrary{matrix,chains,positioning,decorations.pathreplacing,arrows}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.85, 0.85, 0.85}%{0.95,0.95,0.92}
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{white},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{blue},
+	numberstyle=\color{codegray},
+	stringstyle=\color{codepurple},
+	%basicstyle=\footnotesize,
+	basicstyle=\ttfamily,
+	columns=fullflexible,
+	breakatwhitespace=false,  
+	breaklines=true,
+	frame=TRbl,      
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=3pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,
+	frameround=tttt,                  
+	tabsize=3,
+	xleftmargin=2em,
+	framexleftmargin=1.5em
+}
+
+\lstset{style=mystyle}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\setquotestyle{english}
+
+
+
+% **************************************************
+% Document CONTENT
+% **************************************************
+\begin{document}
+
+% --------------------------
+% rename document parts
+% --------------------------
+%\renewcaptionname{ngerman}{\figurename}{Abb.}
+%\renewcaptionname{ngerman}{\tablename}{Tab.}
+\renewcommand{\figurename}{Figure }
+\renewcommand{\tablename}{Table }
+\newcommand{\equationname}{Equation }
+\newcommand{\algorithmname}{Algorithm }
+
+
+\newcommand{\figurenames}{Figures }
+\newcommand{\tablenames}{Tables }
+\newcommand{\equationnames}{Equations }
+\newcommand{\algorithmnames}{Algorithms }
+
+\renewcommand{\lstlistingname}{code snippet}% Listing -> Algorithm
+\renewcommand{\lstlistlistingname}{List of \lstlistingname s}% List of Listings -> List of Algorithms
+
+% --------------------------
+% Front matter
+% --------------------------
+\pagenumbering{roman}			% roman page numbing (invisible for empty page style)
+\pagestyle{empty}				% no header or footers
+\input{content/titlepages}		% INCLUDE: all titlepages
+\cleardoublepage
+
+\pagestyle{plain}				% display just page numbers
+
+
+\input{content/abstract}		% INCLUDE: the abstracts (english and german)
+\cleardoublepage
+%
+
+\setcounter{tocdepth}{2}		% define depth of toc
+\tableofcontents				% display table of contents
+\cleardoublepage
+
+\listoffigures
+\cleardoublepage
+
+\listoftables
+\cleardoublepage
+
+\listofalgorithms
+\cleardoublepage
+
+\lstlistoflistings
+\cleardoublepage
+
+\input{content/declaration}
+\cleardoublepage
+
+\input{content/acknowledgement} % INCLUDE: acknowledgement
+\cleardoublepage
+%
+
+% --------------------------
+% Body matter
+% --------------------------
+\pagenumbering{arabic}			% arabic page numbering
+\setcounter{page}{1}			% set page counter
+\pagestyle{maincontentstyle} 	% fancy header and footer
+
+\include{content/introduction}
+\include{content/literature_review}
+\input{content/snn}
+\input{content/neucube}
+\input{content/largesnn}
+\input{content/encoding}
+\input{content/multimodal}
+\include{content/conclusion}
+
+
+
+
+
+% --------------------------
+% Back matter
+% --------------------------
+{%
+\setstretch{1}
+% \singlespacing
+\renewcommand{\bibfont}{\normalfont\small}
+\setlength{\biblabelsep}{0pt}
+\setlength{\bibitemsep}{0.5\baselineskip plus 0.5\baselineskip}
+\printbibliography[nottype=online]
+\printbibliography[heading=subbibliography,title={Webseiten},type=online,prefixnumbers={@}]
+}
+
+
+\appendix
+\include{content/AppeSNN1}
+\include{content/AppeSNN2}
+\include{content/AppeLargeSNN1}
+
+
+\include{content/AppeCopyright}
+\include{content/AppeEthicalApproval}
+\cleardoublepage
+
+
+\newpage
+\mbox{}
+
+% **************************************************
+% End of Document CONTENT
+% **************************************************
+\end{document}

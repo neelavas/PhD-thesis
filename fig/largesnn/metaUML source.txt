@@ -1,0 +1,51 @@
+Class.SNNc("SNNc")
+       ("network: Graph<List<Vertex>, List<Edge>>")
+       
+       ("+initialiseNetwork(locations: List<Tuple>)","+learnNetwork(data: List<List<boolean>>)","+visualiseNetwork()");
+
+
+Class.Vertex("Vertex")
+       ("+ID: int", "+location: List<int>", "neuron: LIFNeuron")
+       ("+getNeuronInfo()" );
+
+Class.Neuron("GenericNeuron")
+       ("+type: String")
+       ("+init()", 
+        "+simulate():boolean");
+
+Class.LIFNeuron("LIFSpikingNeuron")
+       ("+type: String")
+       ("+init(v_t: float, v_0: float, eta_t: int, spike_h: int)",
+        "+simulate(spike_train: List<boolean>, weights: List<float>):boolean");
+
+Class.IzhikevichNeuron("IzhikevichSpikingNeuron")
+       ("+type: String")
+       ("+init(v_t: float, v_0:float a: float, b: float, c: float, d: float)",
+        "+simulate(spike_train: List<boolean>, weights: List<float>):boolean");
+
+Class.Edge("Edge")
+       ("+ID: int","+fromVertexID: int", "+toVertexID: int","synapse: Synapse")
+       ("+getSynapseInfo()");
+
+Class.Synapse("Synapse")
+       ("plasticity:String","weight:float")
+       ("+updateSynapse(plasticity)", "#STDP()", "#modSTDP()");
+
+Vertex.n=SNNc.s+(-180, -50);
+Neuron.n = Vertex.s + (0, -40);
+Edge.w=Vertex.e+(280,0);
+Synapse.n = Edge.s + (0, -100);
+LIFNeuron.n = Neuron.s+(-150,-40);
+IzhikevichNeuron.n = Neuron.s+(150, -40);
+
+
+
+
+drawObjects(SNNc, Vertex, Neuron, LIFNeuron, IzhikevichNeuron, Edge, Synapse);
+
+link(inheritance)(LIFNeuron.n -- Neuron.sw);
+link(inheritance)(IzhikevichNeuron.n -- Neuron.se);
+link(compositionUni)(Vertex.s -- Neuron.n);
+link(compositionUni)(Edge.s -- Synapse.n);
+link(compositionUni)(SNNc.sw -- Vertex.n);
+link(compositionUni)(SNNc.se -- Edge.n);

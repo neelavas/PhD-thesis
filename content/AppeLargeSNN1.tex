@@ -1,0 +1,377 @@
+
+\chapter{Miscellaneous Code Snippets}
+
+\label{chap:app_SNNc_unsupervised}
+
+\section{Matlab Code for the SNNc Unsupervised Learning Using Forward Adjacency Lists for Connection \texorpdfstring{$C$}{Lg} and Weight \texorpdfstring{$W$}{Lg}}
+
+\begin{lstlisting}[language=Matlab,caption={Matlab code for SNNc unsupervised learning algorithm using forward adjacency list data structure for storing connection C and weight W}]
+function [O] = neucube_unsupervised_learning_forward_adjacency_list( W,C,D,indices_of_input_neuron, V_THR, ETA_THR, KAPPA)
+	N=128;
+	Q=1485;
+	T=size(D,1);
+	O= int16(zeros(T,Q));
+	for t=1:T
+		if(mod(t,N)==1)
+			firing_neuron=int16(zeros(1,Q));
+			last_spike_time=uint16(zeros(1,Q));
+			eta=int16(zeros(1,Q));
+			v=single(zeros(1,Q));
+		end
+		last_spike_time(firing_neuron==1)=t;
+		firing_neuron_indices=find(firing_neuron==1);
+		for i=1:size(firing_neuron_indices,2)
+			index_i=firing_neuron_indices(i);
+			post_synaptic_neuron_indices=C{index_i};
+			if(~isempty(post_synaptic_neuron_indices))
+				for j=1:size(post_synaptic_neuron_indices,2)
+					index_j=post_synaptic_neuron_indices(j); 
+					if(eta(index_j)==0)                
+						v(index_j)=v(index_j)+W{index_i}(1,j);
+					end               
+				end            
+			end
+			firing_neuron(index_i)=0;        
+		end
+		a=find(v>=V_THR);
+		not_a=find(v<V_THR);
+		v(a)=0;
+		eta(a)=ETA_THR;
+		firing_neuron(a)=1;
+		eta(not_a)=max(0,eta(not_a)-1);
+		v(not_a)=max(0,v(not_a)-0.002);  
+		firing_neuron_indices=find(firing_neuron==1);
+		if(~isempty(firing_neuron_indices))
+			for i=1:size(firing_neuron_indices,2)
+				index_firing=firing_neuron_indices(i);                  
+				for k=1:Q              
+					if(find(C{index_firing}==k))
+						index_j=find(C{index_firing}==k);
+						deltaw=KAPPA/single(t-last_spike_time(k)+1);
+						W{index_firing}(1,index_j)=W{index_firing}(1,index_j)-deltaw; 
+					end
+					if(find([C{k}]==index_firing))
+						index_k=find([C{k}]==index_firing);
+						deltaw=KAPPA/single(t-last_spike_time(k)+1);
+						W{k}(1,index_k)= W{k}(1,index_k)+deltaw;                    
+					end
+			end
+		end
+	end
+	firing_neuron(indices_of_input_neuron)=D(t,1:14);
+	firing_neuron(end-14+1:end)=D(t,14+1:end);
+	O(t,:)=firing_neuron;
+	end
+end
+
+
+
+\end{lstlisting}
+\section{Matlab Code for the SNNc Unsupervised Learning Using Forward-backward Adjacency Lists for Connection \texorpdfstring{$C$}{Lg} and Weight \texorpdfstring{$W$}{Lg}}
+\begin{lstlisting}[language=Matlab, caption={Matlab code for SNNc unsupervised learning algorithm using forward-backward adjacency list data structure for storing connection C and weight W}]
+function [O] = neucube_unsupervised_forward_backward_adjacency_list( W,C,D,indices_of_input_neuron, V_THR, ETA_THR, KAPPA )
+	N=128;
+	Q=1485;
+	T=size(D,1);
+	O= int16(zeros(T,Q));
+	for t=1:T
+		if(mod(t,N)==1)
+			firing_neuron=int16(zeros(1,Q));
+			last_spike_time=uint16(zeros(1,Q));
+			eta=int16(zeros(1,Q));
+			v=single(zeros(1,Q));
+		end
+		last_spike_time(firing_neuron==1)=t;
+		firing_neuron_indices=find(firing_neuron==1);
+		for i=1:size(firing_neuron_indices,2)
+			index_i=firing_neuron_indices(i);
+			post_synaptic_neuron_indices=find(C(index_i,:));
+			if(~isempty(post_synaptic_neuron_indices))
+				for j=1:size(post_synaptic_neuron_indices,2)
+					index_j=post_synaptic_neuron_indices(j); 
+					if(eta(index_j)==0)                
+						v(index_j)=v(index_j)+W(index_i,index_j);
+					end   
+				end
+			end
+			firing_neuron(index_i)=0;  
+		end
+		a=find(v>=V_THR);
+		not_a=find(v<V_THR);
+		v(a)=0;
+		eta(a)=ETA_THR;
+		firing_neuron(a)=1;
+		eta(not_a)=max(0,eta(not_a)-1);
+		v(not_a)=max(0,v(not_a)-0.002); 
+		firing_neuron_indices=find(firing_neuron==1);
+		if(~isempty(firing_neuron_indices))
+			for i=1:size(firing_neuron_indices,2)
+				index_firing=firing_neuron_indices(i);  
+				post_neuron_indices=find(C(index_firing,:)==1);
+				for k=1:size(post_neuron_indices,2)
+					index_j=post_neuron_indices(1,k);
+					deltaw=KAPPA/single(t-last_spike_time(index_j)+1);
+					W(index_firing,index_j)=W(index_firing,index_j)-deltaw;           
+				end
+				pre_neuron_indices=find(C(:,index_firing)==1);
+				for k=1:size(pre_neuron_indices,1)
+					index_j=pre_neuron_indices(k,1);
+					deltaw=KAPPA/single(t-last_spike_time(index_j)+1);
+					W(index_j,index_firing)=W(index_j,index_firing)+deltaw; 
+				end
+			end      
+		end
+		firing_neuron(indices_of_input_neuron)=D(t,1:14);
+		firing_neuron(end-14+1:end)=D(t,14+1:end);
+		O(t,:)=firing_neuron;
+	end
+end
+\end{lstlisting}
+\section{Python Code for the Modular Implementation of the SNNc}
+\begin{lstlisting}[language=Python, caption={Python code for modular implementation of SNNc}]
+class SNNc:
+	def __init__(self, spiking_neuron_coordinates, input_neuron_coordinates, SNNc_max_distance=None, connection_algorithm="swc", radial_distance_coverage=0.1):
+		assert isinstance(connection_algorithm, str)
+		assert isinstance(radial_distance_coverage, float)
+		assert isinstance(spiking_neuron_coordinates, np.ndarray)
+		assert isinstance(input_neuron_coordinates, np.ndarray)
+	
+		if connection_algorithm not in "swc":
+			raise ValueError('see doc string for possible values of connection algorithm parameter!!')
+		if not 0 < radial_distance_coverage <= 1:
+			raise ValueError('The radial distance coverage parameter should be between (0,1]!!')
+		self.spiking_neuron_coordinates = spiking_neuron_coordinates
+		self.input_neuron_coordinates = input_neuron_coordinates
+		self.SNNc_coordinates = np.vstack((input_neuron_coordinates, spiking_neuron_coordinates))
+		self.spiking_neuron_count = len(self.spiking_neuron_coordinates)
+		self.input_neuron_count = len(self.input_neuron_coordinates)
+		self.SNNc_neuron_count = self.input_neuron_count + self.spiking_neuron_count
+	
+		self.input_coordinate_indices = np.arange(self.input_neuron_count)
+		self.spiking_coordinate_indices = np.arange(self.input_neuron_count, self.SNNc_neuron_count)
+		"""
+		Calculate maximum distance between the SNNc neurons if SNNc_max_distance=None. Uses a brute force approach due
+		to the irregularity in the shape. Consider updating it to a non bruteforce approach later.
+		"""
+		if SNNc_max_distance is None:
+			self.SNNc_MAX_DISTANCE = 0
+			for ind1, neuron1 in enumerate(self.SNNc_coordinates):
+				for ind2, neuron2 in enumerate(self.SNNc_coordinates):
+					distance = np.linalg.norm(neuron1 - neuron2)
+					if distance > self.SNNc_MAX_DISTANCE:
+						self.SNNc_MAX_DISTANCE = distance
+					else:
+					self.SNNc_MAX_DISTANCE = SNNc_max_distance
+	
+		self.network = None
+			self.create_network(connection_algorithm, radial_distance_coverage)
+	
+	def create_network(self, connection_algorithm, radial_distance_coverage):
+		self.network = nx.DiGraph()
+		nodes_list = []
+		for neuron in np.arange(self.SNNc_neuron_count):
+		if neuron in self.input_coordinate_indices:
+			attributes = dict(type="i", location=self.SNNc_coordinates[neuron, :])
+			attributes["neuron"] = None
+			nodes_list.append((neuron, attributes))
+		else:
+			attributes = dict(type="s", location=self.SNNc_coordinates[neuron, :])
+			nodes_list.append((neuron, attributes))
+		self.network.add_nodes_from(nodes=nodes_list)
+		if connection_algorithm is "swc":
+			self.swc(radial_distance_coverage=radial_distance_coverage)
+			self.network = nx.freeze(self.network)
+	
+	def swc(self, radial_distance_coverage):
+		abs_radial_distance_coverage = radial_distance_coverage * self.SNNc_MAX_DISTANCE
+		edge_list = []
+		points = self.SNNc_coordinates
+		points_tree = scipy.spatial.cKDTree(points)
+		input_neuron_indices = self.input_coordinate_indices
+		for query_index in np.arange(self.SNNc_neuron_count):
+			neighbour_indices = points_tree.query_ball_point(points[query_index], abs_radial_distance_coverage)
+			neighbour_indices_without_input = [index for index in neighbour_indices if index not in input_neuron_indices]
+			for index in neighbour_indices_without_input:
+				edge_list.append((query_index, index))
+				if (index, query_index) not in edge_list:
+					self.network.add_edge(query_index, index, w=0.05)
+	
+	def create_spiking_neurons(self, neuron_type='lif', **parameters):
+		"""
+	
+		Parameters
+		----------
+		neuron_type:str
+		current options: 'LIF'(Leaky integrate and fire).
+		potential_threshold: float
+		'lif' parameter(optional, default=1.0). The firing threshold potential
+		refractory_threshold: int
+		'lif' parameter(optional, default=1.0). The number of discrete times
+		the neuron stays quiet after it fires a spike
+		leak_rate: float
+		'lif' parameter(optional, default=0.000). The absolute leak of
+		potential when the neuron is refractory
+		potential_resting: float
+		'lif' parameter(optional, default=0.0). The resting potential of the neuron.
+		spike_history_length:int
+		'lif' parameter(optional, default=10. The historical spike information that
+		the neuron remembers and calculates the states upon
+	
+	
+		Returns
+		-------
+		None
+	
+		"""
+		if neuron_type not in ("lif"):
+			raise ValueError("See docstring for possible values of neuron_type!!")
+		if neuron_type is "lif":
+		for neuron_index in self.spiking_coordinate_indices:
+			predecessor_count = len(self.network.predecessors(neuron_index))
+			self.network.node[neuron_index]["neuron"] = LeakyIntegrateAndFireNeuron(
+			predecessor_count=predecessor_count, **parameters)
+	
+	def learn_stdp(self, sample, learning_rate):
+		"""
+	
+		Parameters
+		----------
+		sample: numpy.ndarray
+		input samples consisting of spike data(time x feature)
+		input_learns: boolean(optional, default:True)
+		Input connections weights are not changed during learning if set to False
+		learning_rate: float(optional, default:0.5)
+		The learning rate of the learning algorithm
+	
+		Returns
+		-------
+		numpy.ndarray
+		The array of spikes generated by the SNNc for the given input sample. The dimension of the array is
+		time x SNNc neuron count
+	
+	
+		"""
+	
+		assert isinstance(sample, np.ndarray)
+	
+		input_data = sample
+		(simulation_time, _) = input_data.shape
+		spike_data = np.zeros(shape=(simulation_time, self.SNNc_neuron_count), dtype=int)
+		spike_data[:, self.input_coordinate_indices] = input_data
+	
+		for time in np.arange(simulation_time):
+			connections_of_neuron_receiving_spike = []
+			connections_of_neuron_emitting_spike = []
+			"""
+			block for network simulation using spike information present in spike data
+			"""
+			for neuron_id in self.spiking_coordinate_indices:
+				predecessor_indices = self.network.predecessors(neuron_id)
+				predecessor_spike_data = spike_data[time, predecessor_indices]
+	
+				"""
+				Block to compute values to be used during learning
+				"""
+				s_ind = np.nonzero(spike_data[time, predecessor_indices])[0]
+				predecessor_spike_indices = []
+				if len(s_ind) != 0:
+					predecessor_spike_indices = list(np.array(predecessor_indices)[s_ind])
+				for identifier in predecessor_spike_indices:
+					connections_of_neuron_receiving_spike.append((identifier, neuron_id))
+				predecessor_weight_data = []
+				for k in self.network.predecessors(neuron_id):
+					predecessor_weight_data.append(self.network[k][neuron_id]["w"])
+				spk = self.network.node[neuron_id]["neuron"].simulate(spike_train=predecessor_spike_dat,
+																weight=predecessor_weight_data)	
+				"""
+				Block to compute values to be used during learning
+				"""
+				if spk == 1:
+					predecessor_indices = self.network.predecessors(neuron_id)
+					for identifier in predecessor_indices:
+						connections_of_neuron_emitting_spike.append((identifier, neuron_id))
+	
+					if time < simulation_time - 1:
+						spike_data[time + 1, neuron_id] = spk
+			"""
+			block for learning
+			"""
+			for connection in connections_of_neuron_receiving_spike:
+				pre_spike = spike_data[0:time + 1, connection[0]]
+				post_spike = spike_data[0:time + 1, connection[1]]
+				deltaw = self.stdp(pre_synaptic_spike_history=np.abs(pre_spike).tolist(),
+									post_synaptic_spike_history=np.abs(post_spike).tolist(),
+									max_weight_update=learning_rate)
+				self.network[connection[0]][connection[1]]['w'] += deltaw
+			for connection in connections_of_neuron_emitting_spike:
+				pre_spike = spike_data[0:time + 2, connection[0]]
+				post_spike = spike_data[0:time + 2, connection[1]]
+				deltaw = self.stdp(pre_synaptic_spike_history=np.abs(pre_spike).tolist(),
+									post_synaptic_spike_history=np.abs(post_spike).tolist(),
+									max_weight_update=learning_rate)
+				self.network[connection[0]][connection[1]]['w'] += deltaw
+	
+		return spike_data
+	
+	@staticmethod
+	def stdp(pre_synaptic_spike_history, post_synaptic_spike_history, max_weight_update):
+		"""
+	
+		Parameters
+		----------
+		pre_synaptic_spike_history: list
+		It is the binary vector of size n specifying the presynaptic spike history of the neuron.
+		The last element signifies a spike/no spike at current timepoint t, second last element
+		signifies a spike/no spike at t-1 and so on.
+	
+		post_synaptic_spike_history: list
+		It is a binary vector of size n specifying the post synaptic spike history.
+		The last element signifies a spike/no spike at current timepoint t, second
+		last element signifies a spike/no spike at t-1 and so on.
+	
+		max_weight_update: float
+		hyperparameter to control the upper bound of deltaw.
+	
+	
+		Returns
+		-------
+		float
+		
+		"""
+	
+		assert isinstance(pre_synaptic_spike_history, list)
+		assert isinstance(post_synaptic_spike_history, list)
+		if not 0 < max_weight_update <= 1:
+			raise ValueError("See docstring for value range of learning_rate")
+		if len(pre_synaptic_spike_history) != len(post_synaptic_spike_history):
+			raise ValueError("Length mismatch of pre and post synaptic spike history!!")
+		pre_synaptic_spike_energy = 0
+		post_synaptic_spike_energy = 0
+		importance_of_LTP = 0.3
+		importance_of_LTD = 0.3
+		time_history = len(pre_synaptic_spike_history)
+		pre_synaptic_spike_history = np.asarray(pre_synaptic_spike_history)
+		post_synaptic_spike_history = np.asarray(post_synaptic_spike_history)
+		"""
+		calculation of LTD
+		"""
+		if pre_synaptic_spike_history[time_history - 1] == 1:
+			post_spike_indices = np.nonzero(post_synaptic_spike_history)[0]
+			k = max_weight_update * np.exp(
+				-(1 - importance_of_LTD) * ((time_history - 1) - post_spike_indices))
+			pre_synaptic_spike_energy = np.sum(k)
+	
+		"""
+		calculation of LTP
+		"""
+		if post_synaptic_spike_history[time_history - 1] == 1:
+			pre_spike_indices = np.nonzero(pre_synaptic_spike_history)[0]
+			k = max_weight_update * np.exp(
+				-(1 - importance_of_LTP) * ((time_history - 1) - pre_spike_indices))
+			post_synaptic_spike_energy = np.sum(k)
+	
+		deltaw = post_synaptic_spike_energy - pre_synaptic_spike_energy
+		return deltaw
+	
+	
+\end{lstlisting}

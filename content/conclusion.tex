@@ -1,0 +1,64 @@
+\chapter{Conclusion}
+\label{chap:conclusion}
+This thesis has delved into numerous areas relating to both the theory and practice in neuromorphic pattern recognition systems and advanced the current status quo in various ways. This final Chapter discusses the major contributions this present thesis has made towards the literature and further articulates the ways in which the research questions that were posed at the beginning in Section \ref{sec:research_ques} have been answered. The key caveats and limitations of this work are then examined along with the review of future research and open questions identified.
+
+\section{Research Questions and Contributions}
+
+From Chapter \ref{chap:snn} onwards, at the end end of each chapter, a list of contributions has been enumerated. Additionally, a list of peer-reviewed publications that has resulted from that Chapter has also been mentioned. Here, I summarise the key-contributions towards answering the research questions. The novel contributions on the basis of the research questions are as follows:
+
+\subsection{How to Design Architectures of SNN that are Capable of Digesting and Processing Large Volumes and Variety of Spatio-temporal Data?} 
+
+It is no doubt that in the era of big data, a multitude of research is ongoing which delves into the subject of handling large volumes of data. Many of the research in this area concentrate on improving the processing capacities of the infrastructures, such as using GPUs or building elastic cloud infrastructures. This research, however, investigates the large volume data processing problem in the light of efficient data representation in the form of binary spikes, and therefore, aims to build SNN pattern recognition systems that can recognise patterns from such binary spikes. Through the research performed in this thesis, I have delved into various aspects of the ways in which such scalable SNN architectures can be built. 
+
+\subsubsection{Neuromorphic Computing Beyond von Neumann Architecture}
+Chapter, \ref{chap:snn} has followed the development of brain-inspired spiking neural networks and presented the basis of the present research as being paradigm-shifting in regards to computation architecture. This Chapter presented the neuromorphic thinking and design that has the potential of creating a novel, efficient and low power echo-system between neuromorphic hardware (such as SpiNNaker) and neuromorphic pattern recognition systems (such as, the NeuCube) architecture. 
+	
+\subsubsection{Software Design Principles of NeuCube SNN architecture} 
+Through the work in Chapter \ref{chap:neucube} and \ref{chap:large_snn}, an in-depth overview of NeuCube, an SNN architecture was presented at first. The focus was especially on the NeuCube generic prototyping and testing tool as a case of implementation framework. Recognising the NeuCube SNNc layer as the scalability bottleneck of the system, the focus was centered around the scalability of the SNNc layer. It has been elaborated through experimentation and analysis that the adjacency forward-backward list serves as the most optimal data structure for representing the SNNc graph in relation to optimal storage ($S(3\times C)$ complexity), and execution time ($O(1)$) of the SNNc unsupervised learning algorithm. Through simulation in a commodity hardware, it was demonstrated that using the adjacency forward-backward list data structure, it is possible to run neuromorphic SNNc with neurons in the order of $10^6$ and connections in the order of $10^{10}$. Beyond volume, the human brain is extremely good at processing a variety of data, which relates to the modularity (functional specialisation of the parts of the brain) and heterogeneity (variety in the components such as learning mechanisms, synapses, neuron dynamics and so on) inside the brain. Incorporating modularity and heterogeneity, thus, is an important aspect of any SNN system. The design principles with which one can achieve such modular and heterogeneous architectures was demonstrated in these Chapters.  
+	
+\subsection{How to Perform Neural Encoding on Real-world Data to Represent Information as Timings of Spikes?}
+At the start of the research, incorporation of neural, and especially the temporal encoding, was envisioned to be a critical piece of the puzzle towards solving neuromorphic pattern recognition in large volume data. Chapter \ref{chap:encoding} was dedicated towards exploring this idea. 
+
+\subsubsection{Neural Encoding from the Perspective of Data Compression and Information Theory} 
+
+This research began with the very notion that, in terms of pattern recognition, one can in fact, only learn from data when there exists redundancy. In many data analysis tasks, the data is preprocessed or re-coded in a way that could be seen as a form of data compression. If such a preprocessing does not destroy the patterns of interest, it results in comparative performance of the learning algorithms. The motivation of the temporal encoding, thus, was to reduce large volumes of data into a compressed state with minimal loss and the maximal presence of discriminable information. Then, a qualitative comparison of temporal and rate encoding schemes was made, as per Shannon and Kolmogorov's information theory principles. It was found the main interest, the temporal encoding scheme, to be adherent to Kolmogorov's algorithmic information theory.
+	
+\subsubsection{Framework for \emph{a priori} Knowledge Driven Optimisation Based Temporal Encoding} 
+
+The \emph{a priori} knowledge driven encoding framework was proposed on the premise that (1) a universal data encoder does not exist; and (2) \emph{a priori}-knowledge of a data source can be injected into a prediction system that can predict the data generation process. Temporal data encoding was formalised as a generalised constrained optimisation problem (\equationname \ref{eq:compression}), where \emph{a priori}-knowledge of data generation process is injected into the problem formulation.
+	
+\subsubsection{GAGamma Encoding Algorithm and Case Study on Benchmark Data} 
+
+To illustrate a concrete example, an encoding algorithm based on the \emph{a priori}-knowledge driven optimisation framework, namely GAGamma, was proposed, and applied as part of a pattern recognition framework (encoding and classification) on the benchmark StarPlus fMRI dataset. A comparison of the proposed GAGamma algorithm against the state-of-the-art temporal encoding algorithms such as BSA and TC not only demonstrated its superior data compression quality in regards to decoding error and bit compression ratio, but also achieved superior classification performance (\tablename \ref{tab:classification}). Additionally, it was observed that on the benchmark data, applying temporal encoding operation compressed the data dramatically, between $6$ to $25$ times compared to the raw data, still keeping the classification performance high and thus could capture the discriminatory information well. 
+   
+\subsection{How to Integrate Spatial, Temporal and Orientation Information Present in Multi-modal Brain Data using SNN Architecture?} 
+
+This research question relates to Chapter \ref{chap:multimodal}. This research question was envisaged as a direction towards the data fusion approach for pattern recognition in multi-source multi-modal data. In order to keep the research focused and constrained, this research question was directed towards specific use-case, in this case, recognising patterns in multi-modal brain data. The rationale behind fusing multiple modality of brain data revolved around not only a hypothesised improved performance, but superior reliability of the model as well. 
+
+\subsubsection{Personalised SNNc Architecture of NeuCube}
+From a methodological point-of-view, the current research stayed within the NeuCube framework and proposed modification of the NeuCube architecture for dealing with large volumes of multi-modal data. Sub-criticality and saturation behaviours in the NeuCube SNNc unsupervised learning algorithm were analysed, and discussed how such criticality can be minimised by using the personalised SNNc architecture depicted in \figurename \ref{fig:personaliosed_arch}.  
+
+\subsubsection{Orientation Influence Driven Spike-time Dependent Plasticity (oiSTDP) Learning for NeuCube SNNc}
+
+A novel online unsupervised learning algorithm for the SNNc layer of NeuCube was proposed, namely oiSTDP learning algorithm (see \algorithmname \ref{alg:oiSTDP}), that can jointly fuse and learn from the spatial, temporal and orientation information from multi-source brain data.
+
+\subsubsection{Case Study on Predicting Treatment Outcomes of Clozapine on People with Schizophrenia}
+A case study was performed in collaboration with the University of Auckland on predicting treatment outcomes of clozapine in schizophrenia patients. The results presented in \tablename \ref{tab:class} summarise the comparative performances and capabilities of the proposed method against numerous other state-of-the-art methods, including deep learning algorithms. The proposed method of BSA+oiSTDP+KNN has shown best performance in regards to accuracy and Cohen's kappa statistic for the classification task. Further, interrogation of the SNNc network revealed increased network connectivity in the cerebellar region of the model, potentially implicating activity in this area of the brain as a bio-marker of treatment response in schizophrenia.
+
+\section{Limitations of the Thesis}
+
+Generally, the limitations of the individual pieces of work in this thesis have been discussed in context in all of the Chapters. Here, thus, only the overall limitations of this work will be discussed.
+
+The studies performed as part of this thesis are proof-of-concept, rather than comprehensive studies. These works provide certain empirical support towards the systems introduced. It was never the researcher's intention to perform large-scale comprehensive experiments, instead, the intention was to provide the systems and methodologies to support the empirical studies, which are in turn, handled in other literature.
+ 
+
+\section{Future Direction and Closing remarks}
+Concluding a research is almost always the most difficult part because a significant piece of research typically asks more than what it answers. During the process of conducting this research as well, the same was found to be true. It is rather an impossible task to exhaustively list the open-ended questions and future directions. Throughout the Chapters of this thesis, possible future directions of the research have been discussed. Therefore, here, without elaborating too much, some potentially interesting research directions this thesis could open up in the future are mentioned:
+\begin{itemize}
+	\item \textbf{Towards more efficient representation of real world data through data encoding.} The efficiency (both time and power consumption) with which the brain can recognise patterns is second to none. The current state-of-the-art in pattern recognition and artificial intelligence is significantly lagging in this domain. The inherent sequential processing architecture of the von Neumann computer architectures is a significant bottleneck towards achieving efficiency. Through the present work, there has potentially been a paradigm shift in research towards more efficient and accurate pattern recognition algorithms made through highly compressed representation of data using data encoding. This, in conjunction with developments in neuromorphic hardware systems over the next decade, can push AI to be more neuromorphic. 
+	\item\textbf{How to fuse multi-modal data with heterogeneous spatio-temporal resolution?} A significant future direction towards pattern recognition by fusing multi-modal brain data would be to focus on methods for fusing data with heterogeneous spatio-temporal resolutions such as fMRI and EEG. 
+	\item \textbf{ Towards brain-like multi-modular heterogeneous architecture for pattern recognition?} This direction in research relates to the domain of neural networks. Through the work in Chapter \ref{chap:large_snn} possibilities and opportunities (from a software design perspective) have been discussed to create heterogeneous and modular neural network consisting of spatially distributed components of different types that mimics the human brain. However, the open question that remains is the type of scenario where such architecture could be used, and then, the ways in which it could be built in a way that is useful to the field of AI.  
+\end{itemize}
+
+	
+
